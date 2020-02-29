@@ -1,0 +1,17 @@
+{
+  "name": "autoWriteJvtcHealthInfo",
+  "version": "1.0.0",
+  "description": "懂得都懂",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Hcer",
+  "license": "ISC",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.3",
+    "colors": "^1.4.0",
+    "commander": "^4.1.1",
+    "request": "^2.88.2"
+  }
+}
