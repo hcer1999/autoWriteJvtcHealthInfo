@@ -11,6 +11,8 @@
 
 #### 使用教程：
 
+需要安装node，使用之前记得`npm install`一下
+
 ~~~powershell
 node app.js -u 学号 -p 密码 -t 12:15 -n 备注
 ~~~

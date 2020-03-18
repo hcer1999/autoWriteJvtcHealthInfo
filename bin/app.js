@@ -20,13 +20,36 @@ const H = parseInt(program.executionTime.split(':')[0])
 const M = parseInt(program.executionTime.split(':')[1])
 
 function start() {
-  // 开启定时器，每分钟检测一次是否到设置的时间
-  const date = new Date()
+  console.log('========== 程序已启动，程序版本:%s =========='.green.bold, VERSION)
+  console.log(
+    '========== 任务已开启：每天%s点%s分-%s =========='.yellow.bold,
+    H.toString(),
+    M.toString(),
+    note
+  )
+  console.log('------------------------------')
   setInterval(() => {
+    // 开启定时器，每分钟检测一次是否到设置的时间
+    const date = new Date()
+    console.log(
+      '========== 当前时间:%s点%s分 =========='.green.bold,
+      date.getHours(),
+      date.getMinutes()
+    )
     if (date.getMinutes() != M || date.getHours() != H) {
-      console.log('========== %s-未到设置的填写时间：%s点%s分 =========='.yellow.bold,note,H.toString(),M.toString())
-    }else{
-      console.log('========== 吉时已到，准备登录%s的账号,学号为：%s =========='.green.bold, note, username)
+      console.log(
+        '========== %s-未到设置的填写时间：%s点%s分 =========='.yellow.bold,
+        note,
+        H.toString(),
+        M.toString()
+      )
+      console.log('------------------------------')
+    } else {
+      console.log(
+        '========== 吉时已到，准备登录%s的账号,学号为：%s =========='.green.bold,
+        note,
+        username
+      )
       // 首次登陆的包
       const data = {
         url: 'http://xz.jvtc.jx.cn/SPCP/Web/',
@@ -59,14 +82,15 @@ function start() {
           // 提交的时候有一部分不需要，需要提取出来需要用到的那段cookie
           const cookie = response.headers['set-cookie'][0].split('; ')[0]
           // console.log(cookie);
-          console.log('========== 登录成功,正在获取Cookie =========='.green.bold)
+          console.log('========== 登录成功,获取Cookie成功 =========='.green.bold)
           isOpen(cookie)
         } else {
           console.log('登录失败，可能是账号密码错误！'.red.bold)
+          console.log('------------------------------')
         }
       })
     }
-  }, 5000)
+  }, 60000)
 }
 
 // 生成验证码
@@ -169,6 +193,7 @@ function isOpen(cookie) {
       if (body.indexOf('开启时间') != -1 || body.indexOf('只能6点至18点填报') != -1) {
         // 填报未开启
         console.log('========== 填报尚未开始！ =========='.yellow.bold)
+        console.log('------------------------------')
       } else if (body.indexOf('开启中') != -1) {
         //已经开启填报了
         console.log('========== 检测到填报已开启，正在获取对应信息 =========='.green.bold)
@@ -176,6 +201,7 @@ function isOpen(cookie) {
       } else {
         //未知情况，可能没有成功访问
         console.log('========== 可能网站数据变更-_- =========='.red.bold)
+        console.log('------------------------------')
       }
     }
   })
@@ -325,9 +351,11 @@ function findInfo(cookie) {
         confirmSubmit(cookie, info)
       } else {
         console.log('========== 今天您已经填报过了~ =========='.red.bold)
+        console.log('------------------------------')
       }
     } else {
       console.log('========== 访问网址失败！ =========='.red.bold)
+      console.log('------------------------------')
     }
   })
 }
@@ -407,8 +435,10 @@ function confirmSubmit(cookie, info) {
   request.post(options, function(error, response, body) {
     if (!error && response.statusCode == 200 && body.indexOf('提交成功') != -1) {
       console.log('========== 提交成功~ =========='.green.bold)
+      console.log('------------------------------')
     } else {
       console.log('========== 提交失败~ =========='.red.bold)
+      console.log('------------------------------')
     }
   })
 }

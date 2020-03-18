@@ -1,6 +1,6 @@
 {
-  "name": "autoWriteJvtcHealthInfo",
-  "version": "1.0.1",
+  "name": "auto-write-jvtc-health-info",
+  "version": "1.0.2",
   "description": "懂得都懂",
   "main": "app.js",
   "scripts": {

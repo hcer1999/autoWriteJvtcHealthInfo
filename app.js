@@ -1,1 +1,1 @@
-require("./bin/app")
+require('./bin/app')
