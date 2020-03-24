@@ -479,8 +479,8 @@ async function sendEmail(options) {
   let transporter = nodemailer.createTransport({
     service: '163', // true for 465, false for other ports
     auth: {
-      user: 'hhaocheng520@163.com', // generated ethereal user
-      pass: 'QGNFMDDPJJDFHBQU' // generated ethereal password
+      user: '', // generated ethereal user
+      pass: '' // generated ethereal password
     }
   })
 
