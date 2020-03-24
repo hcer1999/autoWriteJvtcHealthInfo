@@ -1,6 +1,7 @@
 const request = require('request')
 const cheerio = require('cheerio')
 const program = require('commander')
+const nodemailer = require('nodemailer')
 require('colors')
 const VERSION = require('../package.json').version
 
@@ -11,11 +12,13 @@ program
   .option('-p, --password <string>', '设置密码')
   .option('-t, --executionTime <string>', '执行时间/24小时制', '12:24')
   .option('-n, --note <string>', '备注', '未备注')
+  .option('-m, --email <string>', '邮件地址')
   .parse(process.argv)
 
 const username = program.username
 const password = program.password
 const note = program.note
+const toEmail = program.email
 const H = parseInt(program.executionTime.split(':')[0])
 const M = parseInt(program.executionTime.split(':')[1])
 
@@ -27,6 +30,12 @@ function start() {
     M.toString(),
     note
   )
+  sendEmail({
+    email: toEmail,
+    subject: '九职自动签到系统-任务开启成功',
+    text: '您已开启九职健康平台自动填报健康信息功能',
+    html: `<b>${note}-您在九职健康平台的自动填报任务已开启，将在每天的${H.toString()}点${M.toString()}给您发送邮件提醒，请留意邮件~</b><br><a href="https://gitee.com/hcer1999/autoWriteJvtcHealthInfo">项目开源地址</a>`
+  })
   console.log('------------------------------')
   setInterval(() => {
     // 开启定时器，每分钟检测一次是否到设置的时间
@@ -86,6 +95,13 @@ function start() {
           isOpen(cookie)
         } else {
           console.log('登录失败，可能是账号密码错误！'.red.bold)
+          // 登录失败，开始发送邮件
+          sendEmail({
+            email: toEmail,
+            subject: '九职自动签到系统-登录失败',
+            text: '您在九职健康平台的设置的账号密码不正确',
+            html: `<b>${note}-您在九职健康平台的设置的账号密码不正确~请检查</b><br><a href="https://gitee.com/hcer1999/autoWriteJvtcHealthInfo">项目开源地址</a>`
+          })
           console.log('------------------------------')
         }
       })
@@ -435,12 +451,56 @@ function confirmSubmit(cookie, info) {
   request.post(options, function(error, response, body) {
     if (!error && response.statusCode == 200 && body.indexOf('提交成功') != -1) {
       console.log('========== 提交成功~ =========='.green.bold)
+      // 提交成功，开始发送邮件
+      sendEmail({
+        email: toEmail,
+        subject: '九职自动签到系统-填报成功',
+        text: '您今天在九职健康平台的自动填报成功~感谢使用本程序',
+        html: `<b>${note}-您今天在九职健康平台的自动填报成功~感谢使用本程序</b><br><a href="https://gitee.com/hcer1999/autoWriteJvtcHealthInfo">项目开源地址</a>`
+      })
       console.log('------------------------------')
     } else {
       console.log('========== 提交失败~ =========='.red.bold)
+      // 提交失败，开始发送失败邮件
+      sendEmail({
+        email: toEmail,
+        subject: '九职自动签到系统-填报失败',
+        text: '您今天在九职健康平台的自动填报失败~',
+        html: `<b>${note}-您今天在九职健康平台的自动填报失败！</b><b style="color='red'">请自行登录平台检查！</b><br><a href="https://gitee.com/hcer1999/autoWriteJvtcHealthInfo">项目开源地址</a>`
+      })
       console.log('------------------------------')
     }
   })
+}
+// 定义发送邮件方法
+async function sendEmail(options) {
+  let testAccount = await nodemailer.createTestAccount()
+  // create reusable transporter object using the default SMTP transport
+  let transporter = nodemailer.createTransport({
+    service: '163', // true for 465, false for other ports
+    auth: {
+      user: 'hhaocheng520@163.com', // generated ethereal user
+      pass: 'QGNFMDDPJJDFHBQU' // generated ethereal password
+    }
+  })
+
+  // send mail with defined transport object
+  let info = await transporter.sendMail(
+    {
+      from: '"九职自动签到系统 👻" <hhaocheng520@163.com>', // sender address
+      to: options.email, // list of receivers
+      subject: '九职自动签到系统 ✔', // Subject line
+      text: options.text, // plain text body
+      html: options.html // html body
+    },
+    (err, info) => {
+      if (err) {
+        console.log('========== 邮件发送失败~ =========='.red.bold)
+        return
+      }
+      console.log('========== 邮件发送成功~ =========='.green.bold)
+    }
+  )
 }
 
 start()
