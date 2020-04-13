@@ -1,11 +1,9 @@
 {
   "name": "auto-write-jvtc-health-info",
-  "version": "1.0.3",
+  "version": "1.0.5",
   "description": "懂得都懂",
   "main": "app.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "scripts": {},
   "author": "Hcer",
   "license": "ISC",
   "dependencies": {
