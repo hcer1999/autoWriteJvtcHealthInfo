@@ -10,17 +10,19 @@ program
   .usage('[options]')
   .option('-u, --username <string>', '设置用户名')
   .option('-p, --password <string>', '设置密码')
-  .option('-t, --executionTime <string>', '执行时间/24小时制', '12:24')
+  .option('-t, --executionTime <string>', '执行时间/24小时制', '10:24')
   .option('-n, --note <string>', '备注', '未备注')
   .option('-m, --email <string>', '邮件地址')
+  .option('-a, --animalHeat <string>', '体温', '37.0')
   .parse(process.argv);
 
-const username = program.username;
-const password = program.password;
-const note = program.note;
-const toEmail = program.email;
-const H = parseInt(program.executionTime.split(':')[0]);
-const M = parseInt(program.executionTime.split(':')[1]);
+const username = program.username;// 登录的账号
+const password = program.password;// 登录的密码
+const note = program.note;// 备注
+const toEmail = program.email;// 接收邮件的邮箱
+const animalHeat = program.animalHeat;// 提交的体温度数
+const H = parseInt(program.executionTime.split(':')[0]);// 提交时间的小时数
+const M = parseInt(program.executionTime.split(':')[1]);// 提交时间的分钟数
 
 function start() {
   console.log('========== 程序已启动，程序版本:%s =========='.green.bold, VERSION);
@@ -29,9 +31,10 @@ function start() {
     email: toEmail,
     subject: '九职自动填报系统-任务开启成功',
     text: '您已开启九职健康平台自动填报健康信息功能',
-    html: `${note}-您在九职健康平台的自动填报任务已开启，已更新填报体温功能，将在每天的<b>${H.toString()}点${M.toString()}</b>给您发送邮件提醒，请留意邮件~<br>如果到了签到时间未收到邮件，请自行登录网址检查<br><a href="http://xz.jvtc.jx.cn/SPCP/Web/">官网签到地址</a>&nbsp;<a href="https://gitee.com/hcer1999/autoWriteJvtcHealthInfo">项目开源地址</a>`,
+    html: `${note}-您在九职健康平台的自动填报任务已开启<br>您设置的签到时间是<b>${H.toString()}点${M.toString()}</b><br>您设置的体温是<b>${animalHeat}度</b><br>请留意邮件~<br>如果到了签到时间未收到邮件，请自行登录网址检查<br><a href="http://xz.jvtc.jx.cn/SPCP/Web/">官网签到地址</a>&nbsp;<a href="https://gitee.com/hcer1999/autoWriteJvtcHealthInfo">项目开源地址</a>`,
   });
   console.log('------------------------------');
+
   setInterval(() => {
     // 开启定时器，每分钟检测一次是否到设置的时间
     const date = new Date();
@@ -41,8 +44,7 @@ function start() {
       console.log('------------------------------');
     } else {
       console.log('========== 吉时已到，准备登录%s的账号,学号为：%s =========='.green.bold, note, username);
-
-      // getReSubmiteFlag();  执行开始
+      // 开始了
       getReSubmiteFlag(username, password);
     }
   }, 60000);
@@ -536,7 +538,7 @@ function temperature(cookie, info) {
           'temperature[UserName]': info.studentName,
           'temperature[ReportDate]': `${new Date().getFullYear()}-${addZero(new Date().getMonth() + 1)}-${addZero(new Date().getDate())}`,
           'temperature[ReportTime]': `${H}:${M}`,
-          'temperature[Temperature]': '37.0',
+          'temperature[Temperature]': animalHeat,
         };
         // 发起请求的配置信息
         const options = {
@@ -608,8 +610,8 @@ async function sendEmail(options) {
   let transporter = nodemailer.createTransport({
     service: '163', // true for 465, false for other ports
     auth: {
-      user: '', // generated ethereal user
-      pass: '', // generated ethereal password
+      user: 'hhaocheng520@163.com', // generated ethereal user
+      pass: 'QGNFMDDPJJDFHBQU', // generated ethereal password
     },
   });
 
