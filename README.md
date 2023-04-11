@@ -2,7 +2,7 @@
 
 使用 node.js 开发的一款简单的小工具~~
 
-![img](http://cdn.wcnm.kim/FhNSTMzMuRZcZ2tD4P3WXvSwrdiH)
+![img](http://cdn.bingkele.cc/FhNSTMzMuRZcZ2tD4P3WXvSwrdiH)
 
 #### 参数说明：
 
